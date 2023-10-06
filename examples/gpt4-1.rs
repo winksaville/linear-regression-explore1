@@ -1,12 +1,4 @@
-// Try 7 Worked after a tweak. We had initially a runtime error
-// which the bot identified. The problem was had only 3 points
-// and the regression needs at least one more point than the
-// number of variables.  So we added a point and it compiles
-// and runs and returns the execpted result, z = 1.0 for
-// x = 0.0 and y = 0.5.
-//
-// Here is the link to the conversation:
-//    https://chat.openai.com/share/c2200401-7e7d-4469-a7e1-c59e8c6512ec
+// Change to use y ~ x + z with y vertical and the dependent variable.
 extern crate linregress;
 
 use linregress::{FormulaRegressionBuilder, RegressionDataBuilder};
@@ -14,10 +6,10 @@ use linregress::{FormulaRegressionBuilder, RegressionDataBuilder};
 fn main() {
     // Given data points as (x, y, z) tuples
     let points = vec![
-        (1.0, 0.0, 1.0),
-        (-1.0, 0.0, 1.0),
+        (1.0, 1.0, 0.0),
+        (-1.0, 1.0, 0.0),
         (0.0, 1.0, 1.0),
-        (0.5, 0.5, 1.0),
+        (0.5, 1.0, 0.5),
     ];
 
     let x: Vec<_> = points.iter().map(|p| p.0).collect();
@@ -37,24 +29,85 @@ fn main() {
         .unwrap();
 
     // Define the regression formula
-    let formula = "z ~ x + y";
+    let formula = "y ~ x + z";
     let model = FormulaRegressionBuilder::new()
         .data(&data)
         .formula(formula)
         .fit()
         .unwrap();
 
-    // Predict z for the test point (0, 0.5)
+    // Predict y for the test point (0, 0.5)
     let test_data = vec![
         ("x", vec![0.0]),
-        ("y", vec![0.5]),
+        ("z", vec![0.5]),
     ];
-    let predictions: Vec<f64> = model.predict(test_data).unwrap();
+    let predictions: Vec<f64> = model.predict(test_data.clone()).unwrap();
 
-    if let Some(z_predicted) = predictions.get(0) {
-        println!("Predicted z value for (0, 0.5): {}", z_predicted);
+    let x = test_data.get(0).unwrap().1[0];
+    let z = test_data.get(1).unwrap().1[0];
+
+    if let Some(y_predicted) = predictions.get(0) {
+        println!("Predicted y value for ({}, {}): {}", x, z, y_predicted);
     }
 }
+
+//// Try 7 Worked after a tweak. We had initially a runtime error
+//// which the bot identified. The problem was had only 3 points
+//// and the regression needs at least one more point than the
+//// number of variables.  So we added a point and it compiles
+//// and runs and returns the execpted result, z = 1.0 for
+//// x = 0.0 and y = 0.5.
+////
+//// Here is the link to the conversation:
+////    https://chat.openai.com/share/c2200401-7e7d-4469-a7e1-c59e8c6512ec
+//extern crate linregress;
+//
+//use linregress::{FormulaRegressionBuilder, RegressionDataBuilder};
+//
+//fn main() {
+//    // Given data points as (x, y, z) tuples
+//    let points = vec![
+//        (1.0, 0.0, 1.0),
+//        (-1.0, 0.0, 1.0),
+//        (0.0, 1.0, 1.0),
+//        (0.5, 0.5, 1.0),
+//    ];
+//
+//    let x: Vec<_> = points.iter().map(|p| p.0).collect();
+//    let y: Vec<_> = points.iter().map(|p| p.1).collect();
+//    let z: Vec<_> = points.iter().map(|p| p.2).collect();
+//
+//    // Constructing data using a vector of tuples
+//    let data_tuples = vec![
+//        ("x", x),
+//        ("y", y),
+//        ("z", z),
+//    ];
+//
+//    // Setup regression data
+//    let data = RegressionDataBuilder::new()
+//        .build_from(data_tuples)
+//        .unwrap();
+//
+//    // Define the regression formula
+//    let formula = "z ~ x + y";
+//    let model = FormulaRegressionBuilder::new()
+//        .data(&data)
+//        .formula(formula)
+//        .fit()
+//        .unwrap();
+//
+//    // Predict z for the test point (0, 0.5)
+//    let test_data = vec![
+//        ("x", vec![0.0]),
+//        ("y", vec![0.5]),
+//    ];
+//    let predictions: Vec<f64> = model.predict(test_data).unwrap();
+//
+//    if let Some(z_predicted) = predictions.get(0) {
+//        println!("Predicted z value for (0, 0.5): {}", z_predicted);
+//    }
+//}
 
 // Try 1
 //extern crate linregress;
