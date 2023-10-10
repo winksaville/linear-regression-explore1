@@ -17,6 +17,10 @@ but it does say only [here](https://docs.rs/linregress/latest/linregress/index.h
 that "only very simple formulae are supported" and doesn't seem to support
 higher degree polynomials.
 
+Add a 3rd degree polynomial fit using nalgebra in `nalgebra.rs`, this is from
+[this](https://chat.openai.com/share/8cec22c2-952c-4fe4-a2fb-d5831ba793a6).
+conversation with GPT-4.
+
 ## License
 
 Licensed under either of
