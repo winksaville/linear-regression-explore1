@@ -12,6 +12,11 @@ one additional tweak was needed to get it to run. Add another data point.
 Here is the [link](https://chat.openai.com/share/c2200401-7e7d-4469-a7e1-c59e8c6512ec)
 to the ChatGPT-4 conversation.
 
+So it appears that linregress only supports degree 1. It doesn't actually say that
+but it does say only [here](https://docs.rs/linregress/latest/linregress/index.html)
+that "only very simple formulae are supported" and doesn't seem to support
+higher degree polynomials.
+
 ## License
 
 Licensed under either of
